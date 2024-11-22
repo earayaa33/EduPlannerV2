@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
+<<<<<<< Updated upstream
+=======
+    'apicalendario.apps.ApicalendarioConfig',
+    'rest_framework'
+    
+>>>>>>> Stashed changes
 ]
 
 MIDDLEWARE = [
