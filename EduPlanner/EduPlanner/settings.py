@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
+    'apicalendario.apps.ApicalendarioConfig',
+    'rest_framework'
     
 ]
 
