@@ -25,10 +25,11 @@
                 <a href="{% url 'Registrarse' %}" class="nav-link text-white">Registrarse</a>            
                 {%endif%}
 
-                {% if request.user.is_authenticated %}                         
+                {% if request.user.is_authenticated %}  
+                <a href="{% url 'salir' %}" class="nav-link text-white ms-auto">Cerrar sesión</a>                       
                 {% else %}
                 <a href="{% url 'Iniciar Sesion' %}" class="nav-link text-white ms-3">Iniciar sesión</a>            
-                {%endif%}  
+                {%endif%}
             </div>   
           </div>
         </div>
