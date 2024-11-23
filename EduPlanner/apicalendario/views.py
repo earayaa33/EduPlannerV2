@@ -6,21 +6,7 @@ from .serializers import EventoSerializer
 from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
 from datetime import date
-
-
-#class EventoListAPIView(generics.ListAPIView):
-   # queryset = Evento.objects.all()
-    #serializer_class = EventoSerializer
-
-#Contiene todas las opciones
-
-#class EventoViewSet(viewsets.ModelViewSet):
-   #queryset = Evento.objects.all()
-   #serializer_class = EventoSerializer
-
-#class EventoListAPIView(generics.ListAPIView):
-    #queryset = Evento.objects.all()
-   # serializer_class = EventoSerializer
+from rest_framework.decorators import api_view
 
 class EventoViewSet(viewsets.ModelViewSet):
     queryset = Evento.objects.all()
@@ -65,7 +51,7 @@ class EventoViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except ValueError as e:
             # Si hay un error de validación (por ejemplo, fecha feriado)
-            return Response(str(e), status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class EventosYFeriadosAPIView(APIView):
     permission_classes = [AllowAny]
@@ -100,11 +86,3 @@ class EventosYFeriadosAPIView(APIView):
 
         return Response(eventos_combinados)
 
-#class EventoDetalleAPIView(generics.RetrieveUpdateDestroyAPIView):
-   # queryset = Evento.objects.all()
-    #serializer_class = EventoSerializer 
-
-   # def get_permissions(self):
-        #if self.request.method in['PUT', "DELETE", 'PATCH'] :
-          #  return [IsAdminUser()]
-        #return [AllowAny()]
