@@ -1,0 +1,14 @@
+GET http://127.0.0.1:8000/api/eventos/ HTTP/1.1
+
+###
+
+POST http://127.0.0.1:8000/api/eventos/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "titulo": "Inicio de clases",
+    "descripcion": "Inicio de semestre",
+    "fecha_inicio": "2024-03-04",
+    "fecha_finalizacion": "2024-03-04",
+    "tipo": "inicio de semestre"
+}
