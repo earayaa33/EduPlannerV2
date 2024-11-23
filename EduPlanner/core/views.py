@@ -38,6 +38,7 @@ def salir(request):
     return redirect("inicio")
 
 def Registrarse(request):
+    return render(request,'registration/Registrarse.html')      
     data = {
         'form': RegistroUserCreationForm()      
     }   

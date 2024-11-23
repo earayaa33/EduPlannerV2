@@ -1,3 +1,6 @@
 from django.contrib import admin
+from apicalendario.models import Evento
 
-# Register your models here.
+
+admin.site.register(Evento)
+

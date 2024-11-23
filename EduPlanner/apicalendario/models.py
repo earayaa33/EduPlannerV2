@@ -34,3 +34,8 @@ class Evento(models.Model):
     fecha_finalizacion = models.DateField(null=False)
     tipo = models.CharField(max_length=200, choices=TIPO_CHOICES, default='inicio de semestre')
 
+class Feriados(models.Model):
+
+    nombre = models.CharField(max_length=200)
+    fecha_inicio = fecha_inicio = models.DateField(null=False)
+    tipo =  models.CharField(max_length=200)
