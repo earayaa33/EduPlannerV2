@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'apicalendario.apps.ApicalendarioConfig',
     'rest_framework',
-    'rest_framework_simplejwt',
     
 ]
 
@@ -137,12 +136,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
 
-    #'DEFAULT_PERMISSION_CLASSES': [
-       # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    #],
-
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication'
     ),
 
