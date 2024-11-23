@@ -30,4 +30,5 @@ urlpatterns = [
     path('api/', include('apicalendario.urls')),
     
 
+    path('accounts/', include('django.contrib.auth.urls')), 
 ]
