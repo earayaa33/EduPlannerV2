@@ -17,32 +17,29 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-               <a class="nav-link active text-white" aria-current="page" href="{% url 'inicio' %}">Pagina Principal</a>
+               <a class="nav-link active text-white" aria-current="page" href="{% url 'inicio' %}">Pagina Principal</a>   
                {% if request.user.is_authenticated %} 
                <a href="{% url 'Panel Admin' %}" class="nav-link text-white">Agregar Evento</a>                        
                {% else %}                          
-               {%endif%}         
+               {%endif%}      
             </div>
-            <div class="d-flex ms-auto">
-                {% if request.user.is_authenticated %}                         
-                {% else %}
-                <a href="{% url 'Registrarse' %}" class="nav-link text-white">Registrarse</a>            
-                {%endif%}
 
-                {% if request.user.is_authenticated %}  
-                <a href="{% url 'salir' %}" class="nav-link text-white ms-auto">Cerrar sesión</a>                       
-                {% else %}
-                <a href="{% url 'Iniciar Sesion' %}" class="nav-link text-white ms-3">Iniciar sesión</a>            
-                {%endif%}  
-            </div>    
+            <div class="d-flex ms-auto">
+              {% if request.user.is_authenticated %}                         
+              {% else %}
+              <a href="{% url 'Registrarse' %}" class="nav-link text-white">Registrarse</a>            
+              {%endif%}
+
+              {% if request.user.is_authenticated %}  
+              <a href="{% url 'salir' %}" class="nav-link text-white ms-auto">Cerrar sesión</a>                       
+              {% else %}
+              <a href="{% url 'Iniciar Sesion' %}" class="nav-link text-white ms-3">Iniciar sesión</a>            
+              {%endif%} 
+            </div>         
           </div>
         </div>
     </nav>
 
-    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
-        <h4>
-          Bienvenido de vuelta {{ user.username | upper }}
-        </h4>
-      </div>
+    <div>Calendario Academico 2024</div>
 </body>
 </html>

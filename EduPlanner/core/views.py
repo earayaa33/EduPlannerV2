@@ -10,6 +10,9 @@ from django.http import HttpResponse
 def inicio (request):
     return render(request,'core/inicio.html')
 
+def PanelAdmin (request):
+    return render(request,'core/Panel Admin.html')    
+
 @login_required
 def IniciarSesion(request):
 

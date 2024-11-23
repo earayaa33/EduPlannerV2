@@ -5,5 +5,6 @@ urlpatterns = [
     path('', vistas.inicio, name='inicio'),
     path('Iniciar Sesion/', vistas.IniciarSesion, name='Iniciar Sesion'), 
     path('Registrarse/', vistas.Registrarse, name='Registrarse'),   
-    path('salir/', vistas.salir, name='salir')
+    path('salir/', vistas.salir, name='salir'),
+    path('Panel Admin/', vistas.PanelAdmin, name='Panel Admin'),
 ]
