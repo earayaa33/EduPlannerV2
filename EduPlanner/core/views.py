@@ -14,4 +14,4 @@ def IniciarSesion(request):
     return render(request, 'core/Iniciar Sesion.html')   
 
 def Registrarse(request):
-    return render(request,'registration/Registrarse.html')        
+    return render(request,'registration/Registrarse.html')      
