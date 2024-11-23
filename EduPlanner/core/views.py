@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login
-from core.forms import RegistroUserCreationForm
+from core.forms import RegistroUserCreationForm, EventoForm 
 from django.contrib.auth import authenticate
 
 # Create your views here.
@@ -11,7 +11,14 @@ def inicio (request):
     return render(request,'core/inicio.html')
 
 def PanelAdmin (request):
-    return render(request,'core/Panel Admin.html')    
+    if request.method == 'POST':
+        form = EventoForm(request.POST)
+        if form.is_valid():
+            form.save()  # Guarda el evento en la base de datos
+            return redirect('Panel Admin')  # Redirige a una página de lista de eventos o la vista deseada
+    else:
+        form = EventoForm()
+    return render(request,'core/Panel Admin.html', {'form': form})    
 
 @login_required
 def IniciarSesion(request):
