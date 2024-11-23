@@ -54,5 +54,44 @@
     </div>
     </div>
 
+    <script>
+        
+        const formulario = document.getElementById('formulario');
+        
+        formulario.addEventListener('submit', async (event) => {
+            event.preventDefault(); 
+            
+            const username = event.target.username.value;  
+            const password = event.target.password.value; 
+            
+            const response = await fetch('http://127.0.0.1:8000/api/token/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', //Tipo de contenido enviado
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password //Otorgamos el usuario y la contraseña para obtener el token
+                }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const accessToken = data.access; //Token de acceso
+                const refreshToken = data.refresh; //Token de refresh
+                
+                
+                localStorage.setItem('access_token', accessToken);
+                localStorage.setItem('refresh_token', refreshToken);
+
+                
+                window.location.href = '/inicio'; 
+            } else {
+                alert('Error en las credenciales o en la autenticación.');
+            }
+        });
+    </script>
+
+
 </body>
 </html>
