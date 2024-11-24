@@ -83,7 +83,8 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     }
 });
 
-calendar.render();  
+calendar.render();
+
 
 //Para enviar los datos modificados
 $('#btnActualizar').click(function(e) {

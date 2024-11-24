@@ -10,6 +10,9 @@ router.register('eventos-publicos', views.EventosPublico, basename='eventos_publ
 router.register('eventos', views.EventosViewSet, basename='eventos')
 router.register('eventos-publicos-y-feriados', views.EventosYFeriadosPublicoViewSet, basename='eventos_publicos_y_feriados')
 router.register('eventos-y-feriados', views.EventosYFeriadosViewSet, basename='eventos_y_feriados')
+router.register('eventos-por-aprobar', views.EventosPorAprobarViewSet, basename='eventos_por_aprobar')
+router.register('eventos-de-planificacion-interna', views.EventosDePlanificacionInternaViewSet, basename='eventos_de_planificacion_interna')
+
 
 urlpatterns = [
     path('', include(router.urls)),

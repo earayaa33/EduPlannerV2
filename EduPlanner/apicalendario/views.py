@@ -14,12 +14,7 @@ class EventosViewSet(viewsets.ModelViewSet):
 
     queryset = Evento.objects.all()
 
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+    permission_classes = [IsAdminUser]
 
     def perform_create(self, serializer):
          # Validación al crear un evento
@@ -82,7 +77,7 @@ class EventosPublico(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 class EventosYFeriadosViewSet(viewsets.ViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]
 
     def list(self, request, *args, **kwargs):
         eventos_publicos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
@@ -122,7 +117,19 @@ class EventosYFeriadosPublicoViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
     def list(self, request, *args, **kwargs):
+
+        tipo_evento = request.query_params.get('tipo')
+
+        print(f"Tipo de evento recibido: {tipo_evento}")
+
         eventos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
+        
+        if tipo_evento:
+            eventos = eventos.filter(tipo=tipo_evento)
+            
+
+        print(f"Eventos filtrados: {eventos}")
+
         eventos_serializados = EventoPublicoSerializer(eventos, many=True).data
 
         url = "https://api.boostr.cl/holidays.json"

@@ -49,7 +49,7 @@
 
     <div class="container mt-3">
       <label for="event-type-filter">Filtrar por tipo de evento:</label>
-      <select id="event-type-filter" class="form-select">
+      <select id="event-type-filter" class="form-select" event="change">
           <option value="">Todos</option>
           <option value="inicio de semestre">Inicio de semestre</option>
           <option value="fin de Semestre">Fin de Semestre</option>
@@ -89,7 +89,6 @@
     
     
     <script src="{% static 'js/mostrar_eventos_publicos.js' %}"></script>
-
     
 </body>
 </html>
