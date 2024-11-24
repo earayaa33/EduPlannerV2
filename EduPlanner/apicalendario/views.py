@@ -81,7 +81,7 @@ class EventosYFeriadosViewSet(viewsets.ViewSet):
 
     def list(self, request, *args, **kwargs):
         eventos_publicos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
-        eventos_planificacion = Evento.objects.filter(planificacion_interna=True)
+        eventos_planificacion = Evento.objects.filter(planificacion_interna=True, es_oficial=True)
         eventos_todos = eventos_publicos | eventos_planificacion
 
         eventos_serializados = EventoSerializer(eventos_todos, many=True).data
