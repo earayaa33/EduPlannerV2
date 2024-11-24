@@ -20,11 +20,12 @@ def PanelAdmin (request):
     if request.method == 'POST':
         form = EventoForm(request.POST)
         if form.is_valid():
-            form.save()  # Guarda el evento en la base de datos
-            return redirect('Panel Admin')  # Redirige a una página de lista de eventos o la vista deseada
+            # Este código será movido a una llamada a la API desde el frontend
+            event_data = form.cleaned_data
+            return JsonResponse({"message": "Formulario válido. Se enviará a la API."})
     else:
         form = EventoForm()
-    return render(request,'core/Panel Admin.html', {'form': form})    
+    return render(request, 'core/Panel Admin.html', {'form': form})
 
 @login_required
 def IniciarSesion(request):
@@ -60,6 +61,11 @@ def Registrarse(request):
             else:
                 data['form'] = Formulario
 
+
+    return render(request,'registration/Registrarse.html', data)  
+
+def ModificarEvento(request):
+    return render(request, 'core/Modificar evento.html')      
     return render(request,'registration/Registrarse.html', data)        
 
 
