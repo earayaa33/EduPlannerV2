@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.14/js/messages/messages.es-es.js" type="text/javascript"></script>
     <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-success">
@@ -60,25 +61,6 @@
                         <h1>Modificar evento</h1>
                     </div>
                 </div>
-                <div class="row">
-
-                    
-
-                </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <table class="table table-dark table-hover">
-                            <thead>
-                                <tr>
-                                  <th scope="col">Titulo</th>
-                                  <th scope="col">Descripcion</th>
-                                  <th scope="col">Fecha1</th>
-                                  <th scope="col">Fecha2</th>
-                                </tr>
-                              </thead>
-                      </table>
-                    </div>
-                </div>
 
                 <div class="row">
 
@@ -96,7 +78,7 @@
                     </div>
                     <div class="row mb-5">
                         <label for="exampleDataList" class="form-label">Datalist example</label>
-                        <input class="form-control" list="opcionesDataList" id="exampleDataList" placeholder="Type to search...">
+                        <input class="form-control" list="opcionesDataList" id="inputTipo" placeholder="Type to search...">
                         <datalist id="opcionesDataList">
                             <option value="San Francisco">
                             <option value="New York">
@@ -126,18 +108,76 @@
 
                     </div>
 
+                    <div class="row">
+
+                        <div class="col-lg-6"><button class="btn btn-primary" type="submit">Actualizar evento</button></div>
+                        <div class="col-lg-6"><button class="btn btn-danger" type="submit">Eliminar evento</button></div>
+
+                    </div>
+
                       
 
                 </div>
                 
             </div>
-            <div class="col-lg-6">
-                <h1>Eliminar evento</h1>
+            <div class="col-lg-6"> <!--Aqui deberia ir el calendario-->
+                <div id="calendar"></div>
             </div>
 
         </div>
 
     </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- JQuery (requerido por FullCalendar) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
+            locale: 'es',  // Configurar el idioma en español
+            events: function(fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: '/api/eventos/',  // URL de la API para obtener los eventos
+                    method: 'GET',
+                    success: function(data) {
+                        var events = data.map(function(event) {
+                            return {
+                                title: event.titulo,  // Título del evento
+                                start: event.fecha_inicio,  // Fecha de inicio
+                                end: event.fecha_finalizacion, // Fecha de finalización
+                                description: event.descripcion,
+                                tipo: event.tipo
+                                
+                            };
+                        });
+                        successCallback(events);  // Retornar los eventos al calendario
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error al obtener los eventos:", error);
+                        failureCallback();  // Si ocurre un error, notificar
+                    }
+                });
+            },
+            headerToolbar: {
+                left: 'prev,next today',  // Botones para cambiar de mes
+                center: 'title',  // Título del mes actual
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
+            },
+            eventClick: function(info) {
+                // Cuando un evento es clickeado, rellenamos los campos del formulario
+                $('#inputTitulo').val(info.event.title);
+                $('#inputDescripcion').val(info.event.extendedProps.description);
+                $('#datepicker1').val(info.event.start.toLocaleDateString());
+                $('#datepicker').val(info.event.end ? info.event.end.toLocaleDateString() : '');
+                $('#inputTipo').val(info.event.extendedProps.tipo);
+            }
+        });
+
+        calendar.render();  // Renderizar el calendario
+    </script>
     
 </body>
 </html>
