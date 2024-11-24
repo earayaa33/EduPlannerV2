@@ -1,24 +1,24 @@
-//Funcion para formatear las fechas
+
 
 function formatToYYYYMMDD(date) {
     var d = new Date(date);
     var year = d.getFullYear();
-    var month = ('0' + (d.getMonth() + 1)).slice(-2);  // Añadir 1 ya que los meses son de 0 a 11
+    var month = ('0' + (d.getMonth() + 1)).slice(-2);  
     var day = ('0' + d.getDate()).slice(-2);  
     return year + '-' + month + '-' + day;  
 }
 
 
 
-var eventId = null;  // Variable global para almacenar el id del evento seleccionado
+var eventId = null;  
 
 var calendarEl = document.getElementById('calendar');
 var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
-    locale: 'es',  // Configurar el idioma en español
+    initialView: 'dayGridMonth',  
+    locale: 'es',  
     events: function(fetchInfo, successCallback, failureCallback) {
         $.ajax({
-            url: '/api/eventos-y-feriados/',  // URL de la API para obtener los eventos
+            url: '/api/eventos-y-feriados/',  
             method: 'GET',
             success: function(data) {
                 var events = data.map(function(event) {
@@ -42,7 +42,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     },
     eventDidMount: function(info) {
         $(info.el).tooltip({
-            title: info.event.title,  // Muestra el título completo al pasar el cursor
+            title: info.event.title,  
             placement: 'top',
             trigger: 'hover',
             container: 'body'
@@ -55,12 +55,12 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     },
     eventClick: function(info) {
 
-         // Obtener el ID del evento
+         
          eventId = info.event.id;
          
          var isFeriado = info.event.extendedProps.feriado;
  
-         // Mostrar u ocultar los botones según si es feriado o no
+         
          if (isFeriado) {
              $('#btnActualizar').hide();  
              $('#btnEliminar').hide();
@@ -69,7 +69,7 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
              $('#btnEliminar').show();
          }
  
-         // Formatear fechas
+         
          var inicio_formateado = info.event.start ? formatToYYYYMMDD(info.event.start) : '';
          var fin_formateado = info.event.end ? formatToYYYYMMDD(info.event.end) : '';
  
@@ -86,12 +86,12 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
 calendar.render();
 
 
-//Para enviar los datos modificados
+
 $('#btnActualizar').click(function(e) {
-    e.preventDefault();  // Prevenir el comportamiento predeterminado del formulario
+    e.preventDefault();  
 
     if (eventId !== null) {
-        // Recoger los valores del formulario
+        
         var titulo = $('#inputTitulo').val();
         var descripcion = $('#inputDescripcion').val();
         var tipo = $('#inputTipo').val();
@@ -102,7 +102,7 @@ $('#btnActualizar').click(function(e) {
         var fecha_finalizacion_formatted = formatToYYYYMMDD(fecha_finalizacion);
 
 
-        // Crear un objeto con los nuevos datos del evento
+        
         var updatedEvent = {
             id : eventId,
             titulo: titulo,
@@ -114,18 +114,18 @@ $('#btnActualizar').click(function(e) {
 
         console.log(updatedEvent);
 
-        // Enviar la solicitud PUT al backend
+        
         $.ajax({
-            url: '/api/eventos/' + eventId + '/',  // URL de la API para actualizar el evento (usando el id del evento)
-            method: 'PUT',  // Método PUT para actualizar
-            data: JSON.stringify(updatedEvent),  // Datos del evento actualizado
+            url: '/api/eventos/' + eventId + '/',  
+            method: 'PUT',  
+            data: JSON.stringify(updatedEvent),  
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken  // Incluir el token CSRF en los encabezados
+                'X-CSRFToken': csrfToken  
             },
             success: function(response) {
                 alert('Evento actualizado con éxito');
-                calendar.refetchEvents();  // Recargar los eventos en el calendario
+                calendar.refetchEvents();  
             },
             error: function(xhr, status, error) {
                 const errorMessage = xhr.responseJSON && xhr.responseJSON.detail ? xhr.responseJSON.detail : "Error desconocido";
@@ -137,25 +137,25 @@ $('#btnActualizar').click(function(e) {
     }
 });
 
-//Eliminar un evento
+
 
 $('#btnEliminar').click(function (e) {
-    e.preventDefault(); // Prevenir comportamiento predeterminado del botón
+    e.preventDefault(); 
 
-    if (eventId !== null) { // Verificar que un evento esté seleccionado
-        // Mostrar un cuadro de confirmación al usuario
+    if (eventId !== null) { 
+        
         if (confirm('¿Estás seguro de que deseas eliminar este evento? Esta acción no se puede deshacer.')) {
-            // Enviar la solicitud DELETE al backend
+            
             $.ajax({
-                url: '/api/eventos/' + eventId + '/', // URL de la API para eliminar el evento
-                method: 'DELETE', // Método DELETE para eliminar
+                url: '/api/eventos/' + eventId + '/', 
+                method: 'DELETE', 
                 headers: {
-                    'X-CSRFToken': csrfToken // Token CSRF para autenticación
+                    'X-CSRFToken': csrfToken 
                 },
                 success: function (response) {
                     alert('Evento eliminado con éxito');
-                    calendar.refetchEvents(); // Recargar los eventos en el calendario
-                    limpiarFormulario(); // Limpiar los campos del formulario
+                    calendar.refetchEvents(); 
+                    limpiarFormulario(); 
                 },
                 error: function (xhr, status, error) {
                     console.log('Error al eliminar el evento:', error);
@@ -168,13 +168,13 @@ $('#btnEliminar').click(function (e) {
     }
 });
 
-// Función para limpiar el formulario después de eliminar un evento
+
 function limpiarFormulario() {
     $('#inputTitulo').val('');
     $('#inputDescripcion').val('');
     $('#datepicker1').val('');
     $('#datepicker').val('');
     $('#inputTipo').val('');
-    eventId = null; // Resetear el id del evento seleccionado
+    eventId = null; 
 }
 

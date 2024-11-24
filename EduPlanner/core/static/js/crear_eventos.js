@@ -1,10 +1,10 @@
 document.getElementById('evento-form').addEventListener('submit', async function(event) {
-    event.preventDefault();  // Evita el envío tradicional del formulario
+    event.preventDefault();  
 
-    // Obtén los datos del formulario
+    
     const formData = new FormData(this);
 
-    // Convierte los datos del formulario a un objeto
+    
     const formObject = {};
     formData.forEach((value, key) => {
         if (key !== 'csrfmiddlewaretoken') {
@@ -37,21 +37,21 @@ document.getElementById('evento-form').addEventListener('submit', async function
     console.log(formObject);
 
     try {
-    // Envia la solicitud POST al API REST
+    
     const response = await fetch('/api/eventos/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',  // Asegúrate de que sea JSON
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value  // Asegúrate de incluir el token CSRF
+            'Content-Type': 'application/json',  
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value  
         },
-        body: JSON.stringify(formObject)  // Envía los datos como JSON
+        body: JSON.stringify(formObject)  
     });
 
     const data = await response.json();
     
     if (response.ok) {
         alert('Evento creado con éxito');
-        window.location.href = '';  // Redirige a la página de administración
+        window.location.href = '';  
     } else {
         alert('Error al crear el evento: ' + data.detail);
     }
@@ -64,41 +64,41 @@ document.getElementById('evento-form').addEventListener('submit', async function
 
 var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
-        locale: 'es',  // Configurar el idioma en español
+        initialView: 'dayGridMonth',  
+        locale: 'es',  
         events: function(fetchInfo, successCallback, failureCallback) {
                 $.ajax({
-                    url: '/api/eventos-y-feriados/',  // URL de la API para obtener los eventos
+                    url: '/api/eventos-y-feriados/',  
                     method: 'GET',
                     success: function(data) {
                         var events = data.map(function(event) {
                             return {
-                                title: event.titulo,  // Título del evento
-                                start: event.fecha_inicio,  // Fecha de inicio
-                                end: event.fecha_finalizacion  // Fecha de finalización
+                                title: event.titulo,  
+                                start: event.fecha_inicio,  
+                                end: event.fecha_finalizacion  
                             };
                         });
-                        successCallback(events);  // Retornar los eventos al calendario
+                        successCallback(events);  
                     },
                     error: function(xhr, status, error) {
                         console.log("Error al obtener los eventos:", error);
-                        failureCallback();  // Si ocurre un error, notificar
+                        failureCallback();  
                     }
                 });
             },
             eventDidMount: function(info) {
                 $(info.el).tooltip({
-                    title: info.event.title,  // Muestra el título completo al pasar el cursor
+                    title: info.event.title,  
                     placement: 'top',
                     trigger: 'hover',
                     container: 'body'
                 });
             },
             headerToolbar: {
-                left: 'prev,next today',  // Botones para cambiar de mes
-                center: 'title',  // Título del mes actual
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
+                left: 'prev,next today',  
+                center: 'title',  
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'  
             }
         });
 
-    calendar.render();  // Renderizar el calendario   
+    calendar.render();    
