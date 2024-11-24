@@ -83,12 +83,6 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
 
 calendar.render();
 
-// Filtrar eventos cuando se cambie la opción en el select
-$('#event-type-filter').change(function() {
-    calendar.refetchEvents();  // Recargar los eventos con el filtro aplicado
-});  
-
-
 //Para enviar los datos modificados
 $('#btnActualizar').click(function(e) {
     e.preventDefault();  // Prevenir el comportamiento predeterminado del formulario
