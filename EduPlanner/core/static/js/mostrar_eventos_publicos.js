@@ -1,83 +1,46 @@
-var calendarEl = document.getElementById('calendar');
 
 var tipoSeleccionado = '';
 
+var calendarEl = document.getElementById('calendar');
 var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
-        locale: 'es',  // Configurar el idioma en español
-        events: function(fetchInfo, successCallback, failureCallback) {
-                $.ajax({
-                    url: '/api/eventos-publicos-y-feriados/',  // URL de la API para obtener los eventos
-                    method: 'GET',
-                    success: function(data) {
-                        var events = data.map(function(event) {
-                            return {
-                                title: event.titulo,  // Título del evento
-                                start: event.fecha_inicio,  // Fecha de inicio
-                                end: event.fecha_finalizacion  // Fecha de finalización
-                            };
-                        });
-                        successCallback(events);  // Retornar los eventos al calendario
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error al obtener los eventos:", error);
-                        failureCallback();  // Si ocurre un error, notificar
-                    }
+    initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
+    locale: 'es',  // Configurar el idioma en español
+    events: function(fetchInfo, successCallback, failureCallback) {
+            
+            // Construir la URL para la API con el tipo de evento seleccionado
+        var url = '/api/eventos-publicos-y-feriados/';
+            
+         $.ajax({
+            url: url,  // URL de la API para obtener los eventos
+            method: 'GET',
+            success: function(data) {
+                // Mapear los datos obtenidos de la API a los eventos del calendario
+                var events = data.map(function(event) {
+                    return {
+                        title: event.titulo,  // Título del evento
+                        start: event.fecha_inicio,  // Fecha de inicio
+                        end: event.fecha_finalizacion,  // Fecha de finalización
+                        description: event.descripcion,
+                        tipo: event.tipo,
+                        feriado: event.feriado
+                    };
                 });
-
-                successCallback(events);  // Pasar los eventos filtrados al calendario
+                successCallback(events);  // Pasar los eventos al calendario
             },
             error: function(xhr, status, error) {
                 console.log("Error al obtener los eventos:", error);
-                failureCallback();
+                failureCallback();  // Si ocurre un error, notificar al calendario
             }
         });
     },
-    eventDidMount: function(info) {
-        $(info.el).tooltip({
-            title: info.event.title,  // Muestra el título completo al pasar el cursor
-            placement: 'top',
-            trigger: 'hover',
-            container: 'body'
-        });
-    },
-    headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-    },
-    eventClick: function(info) {
-        eventId = info.event.id;
-        var isFeriado = info.event.extendedProps.feriado;
-
-        if (isFeriado) {
-            $('#btnActualizar').hide();
-            $('#btnEliminar').hide();
-        } else {
-            $('#btnActualizar').show();
-            $('#btnEliminar').show();
+        headerToolbar: {
+            left: 'prev,next today',  // Botones para cambiar de mes
+            center: 'title',  // Título del mes actual
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
         }
+    });
 
-        var inicio_formateado = info.event.start ? formatToYYYYMMDD(info.event.start) : '';
-        var fin_formateado = info.event.end ? formatToYYYYMMDD(info.event.end) : '';
-
-        $('#inputTitulo').val(info.event.title);
-        $('#inputDescripcion').val(info.event.extendedProps.description);
-        $('#datepicker1').val(inicio_formateado);
-        $('#datepicker').val(fin_formateado);
-        $('#inputTipo').val(info.event.extendedProps.tipo);
-    }
-});
-
-calendar.render();
-
-// Filtrar eventos cuando se cambie la opción en el select
-$('#event-type-filter').change(function() {
-    calendar.refetchEvents();  // Recargar los eventos con el filtro aplicado
-});
-
-
-calendar.render();  // Renderizar el calendario    
+calendar.render();  // Renderizar el calendario
 
 $(document).ready(function() {
     let tipoSeleccionado = ''; 

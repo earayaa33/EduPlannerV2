@@ -1,5 +1,4 @@
 document.getElementById('evento-form').addEventListener('submit', async function(event) {
-    window.location.href = '/core/Panel Admin/'; // se extrae la url de Panel Admin
     event.preventDefault();  // Evita el envío tradicional del formulario
 
     // Obtén los datos del formulario
@@ -13,13 +12,11 @@ document.getElementById('evento-form').addEventListener('submit', async function
     }
     });
 
-   
-
     const esOficial = document.getElementById('checkOficial').checked;
     formObject.es_oficial = esOficial;
 
     const esInterno = document.getElementById('checkPlanificacion').checked;
-    formObject.planificacion_interna = esInterno;
+    formObject.planificacion_interna = esInterno
 
     if (formObject.fecha_inicio_day && formObject.fecha_inicio_month && formObject.fecha_inicio_year) {
         const fechaInicio = `${formObject.fecha_inicio_year}-${formObject.fecha_inicio_month.padStart(2, '0')}-${formObject.fecha_inicio_day.padStart(2, '0')}`;
@@ -66,42 +63,34 @@ document.getElementById('evento-form').addEventListener('submit', async function
 
 
 var calendarEl = document.getElementById('calendar');
-var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
-    locale: 'es',  // Configurar el idioma en español
-    events: function(fetchInfo, successCallback, failureCallback) {
-            
-            // Construir la URL para la API con el tipo de evento seleccionado
-        var url = '/api/eventos-y-feriados/';
-            
-         $.ajax({
-            url: url,  // URL de la API para obtener los eventos
-            method: 'GET',
-            success: function(data) {
-                // Mapear los datos obtenidos de la API a los eventos del calendario
-                var events = data.map(function(event) {
-                    return {
-                        title: event.titulo,  // Título del evento
-                        start: event.fecha_inicio,  // Fecha de inicio
-                        end: event.fecha_finalizacion,  // Fecha de finalización
-                        description: event.descripcion,
-                        tipo: event.tipo,
-                        feriado: event.feriado
-                    };
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
+        locale: 'es',  // Configurar el idioma en español
+        events: function(fetchInfo, successCallback, failureCallback) {
+                $.ajax({
+                    url: '/api/eventos-y-feriados/',  // URL de la API para obtener los eventos
+                    method: 'GET',
+                    success: function(data) {
+                        var events = data.map(function(event) {
+                            return {
+                                title: event.titulo,  // Título del evento
+                                start: event.fecha_inicio,  // Fecha de inicio
+                                end: event.fecha_finalizacion  // Fecha de finalización
+                            };
+                        });
+                        successCallback(events);  // Retornar los eventos al calendario
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Error al obtener los eventos:", error);
+                        failureCallback();  // Si ocurre un error, notificar
+                    }
                 });
-                successCallback(events);  // Pasar los eventos al calendario
             },
-            error: function(xhr, status, error) {
-                console.log("Error al obtener los eventos:", error);
-                failureCallback();  // Si ocurre un error, notificar al calendario
+            headerToolbar: {
+                left: 'prev,next today',  // Botones para cambiar de mes
+                center: 'title',  // Título del mes actual
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
             }
         });
-    },
-        headerToolbar: {
-            left: 'prev,next today',  // Botones para cambiar de mes
-            center: 'title',  // Título del mes actual
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
-        }
-    });
 
-calendar.render();  // Renderizar el calendario
+    calendar.render();  // Renderizar el calendario   
