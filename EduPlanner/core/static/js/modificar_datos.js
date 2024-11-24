@@ -40,6 +40,14 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
             }
         });
     },
+    eventDidMount: function(info) {
+        $(info.el).tooltip({
+            title: info.event.title,  // Muestra el título completo al pasar el cursor
+            placement: 'top',
+            trigger: 'hover',
+            container: 'body'
+        });
+    },
     headerToolbar: {
         left: 'prev,next today',  
         center: 'title',  
