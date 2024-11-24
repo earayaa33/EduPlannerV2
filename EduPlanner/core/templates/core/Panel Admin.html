@@ -75,6 +75,7 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <!-- JQuery (requerido por FullCalendar) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         var calendarEl = document.getElementById('calendar');
@@ -99,6 +100,14 @@
                         console.log("Error al obtener los eventos:", error);
                         failureCallback();  // Si ocurre un error, notificar
                     }
+                });
+            },
+            eventDidMount: function(info) {
+                $(info.el).tooltip({
+                    title: info.event.title,  // Muestra el título completo al pasar el cursor
+                    placement: 'top',
+                    trigger: 'hover',
+                    container: 'body'
                 });
             },
             headerToolbar: {
