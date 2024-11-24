@@ -20,9 +20,18 @@ class EventoViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        # Obtener la fecha del evento
-        fecha_evento = serializer.validated_data['fecha_inicio']
-        
+         # Validación al crear un evento
+        self.validar_feriado(serializer.validated_data['fecha_inicio'], serializer.validated_data['fecha_finalizacion'])
+        # Si no hay conflicto, guardar el evento
+        serializer.save()
+
+    def perform_update(self, serializer):
+        # Validación al actualizar un evento
+        self.validar_feriado(serializer.validated_data['fecha_inicio'], serializer.validated_data['fecha_finalizacion'])
+        # Si no hay conflicto, guardar el evento
+        serializer.save()
+
+    def validar_feriado(self, fecha_inicio, fecha_finalizacion):
         # Hacer una solicitud a la API de feriados para obtener los feriados
         feriados_url = "https://api.boostr.cl/holidays.json?country=CL&year=2024"  # Asegúrate de pasar el año y país correctamente
         headers = {"accept": "application/json"}
@@ -36,19 +45,24 @@ class EventoViewSet(viewsets.ModelViewSet):
             # Verificar si la fecha del evento coincide con algún feriado
             for feriado in feriados:
                 fecha_feriado = feriado.get("date")
-                if fecha_evento == date.fromisoformat(fecha_feriado):  # Comparamos solo la fecha
-                    raise ValueError(f"No se puede crear un evento en un día feriado: {fecha_feriado}")
+                if (fecha_inicio == date.fromisoformat(fecha_feriado)) or (fecha_finalizacion == date.fromisoformat(fecha_feriado)):
+                    raise ValueError(f"No se puede crear o modificar un evento en un día feriado: {fecha_feriado}")
         else:
             # Si no se pudo obtener los feriados de la API
             raise ValueError("No se pudo obtener la lista de feriados para realizar la validación.")
-
-        # Si no hay conflicto con los feriados, guardar el evento
-        serializer.save()
 
     def create(self, request, *args, **kwargs):
         try:
             # Llamamos a perform_create para que se ejecute la validación
             return super().create(request, *args, **kwargs)
+        except ValueError as e:
+            # Si hay un error de validación (por ejemplo, fecha feriado)
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            # Llamamos a perform_update para que se ejecute la validación
+            return super().update(request, *args, **kwargs)
         except ValueError as e:
             # Si hay un error de validación (por ejemplo, fecha feriado)
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -69,11 +83,11 @@ class EventosYFeriadosAPIView(APIView):
         feriados = response.json().get("data",[])
 
         eventos_a_ordenar = [
-            {"titulo":evento["titulo"], "descripcion":evento["descripcion"], "fecha_inicio":evento["fecha_inicio"], "fechas_finalizacion":evento["fecha_finalizacion"]}
+            {"id":evento["id"], "titulo":evento["titulo"], "descripcion":evento["descripcion"], "fecha_inicio":evento["fecha_inicio"], "fecha_finalizacion":evento["fecha_finalizacion"], "tipo":evento["tipo"], "feriado":False}
             for evento in eventos_serializados
         ]
         feriados_a_ordenar = [
-            {"titulo":feriado["title"], "fecha_inicio":feriado["date"], "tipo":feriado["type"]}
+            {"titulo":feriado["title"], "fecha_inicio":feriado["date"], "tipo":feriado["type"], "feriado":True}
             for feriado in feriados
         ]
 

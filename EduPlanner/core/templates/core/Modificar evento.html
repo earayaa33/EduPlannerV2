@@ -85,11 +85,11 @@
                         </div>
                     </div>
                     <div class="row mb-5">
-                        <label for="exampleDataList" class="form-label">Datalist example</label>
+                        <label for="exampleDataList" class="form-label">Tipo de evento</label>
                         <input class="form-control" list="opcionesDataList" id="inputTipo" placeholder="Type to search...">
                         <datalist id="opcionesDataList">
                             {% for value, label in tipo_choices %}
-                                <option value="{{ label }}">{{ value }}</option>
+                                <option value="{{ value }}">{{ label }}</option>
                             {% endfor %}
                         </datalist>
 
@@ -138,9 +138,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    
-    
-   
 
     <script src="{% static 'js/modificar_datos.js' %}"></script>
 

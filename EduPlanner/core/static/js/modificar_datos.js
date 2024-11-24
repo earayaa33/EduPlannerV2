@@ -8,17 +8,6 @@ function formatToYYYYMMDD(date) {
     return year + '-' + month + '-' + day;  
 }
 
-// Función para limpiar el formulario después de eliminar un evento
-function limpiarFormulario() {
-    $('#inputTitulo').val('');
-    $('#inputDescripcion').val('');
-    $('#datepicker1').val('');
-    $('#datepicker').val('');
-    $('#inputTipo').val('');
-    eventId = null; // Resetear el id del evento seleccionado
-}
-
-
 
 
 var eventId = null;  // Variable global para almacenar el id del evento seleccionado
@@ -29,20 +18,21 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
     locale: 'es',  // Configurar el idioma en español
     events: function(fetchInfo, successCallback, failureCallback) {
         $.ajax({
-            url: '/api/eventos/',  // URL de la API para obtener los eventos
+            url: '/api/eventos-y-feriados/',  // URL de la API para obtener los eventos
             method: 'GET',
             success: function(data) {
-                var eventos = data.map(function(evento) {
+                var events = data.map(function(event) {
                     return {
-                        id: evento.id,  
-                        title: evento.titulo,  
-                        start: evento.fecha_inicio,  
-                        end: evento.fecha_finalizacion, 
-                        description: evento.descripcion,
-                        tipo: evento.tipo
+                        id: event.id,  
+                        title: event.titulo,  
+                        start: event.fecha_inicio,  
+                        end: event.fecha_finalizacion , 
+                        description: event.descripcion,
+                        tipo: event.tipo,
+                        feriado : event.feriado
                     };
                 });
-                successCallback(eventos);  
+                successCallback(events);  
             },
             error: function(xhr, status, error) {
                 console.log("Error al obtener los eventos:", error);
@@ -56,15 +46,32 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         right: 'dayGridMonth,timeGridWeek,timeGridDay'  
     },
     eventClick: function(info) {
-        var inicio_formateado= info.event.start ? formatToYYYYMMDD(info.event.start) : '';
-        var fin_formateado = info.event.end ? formatToYYYYMMDD(info.event.end) : '';
-        
-        eventId = info.evento.id;  
-        $('#inputTitulo').val(info.evento.title);
-        $('#inputDescripcion').val(info.evento.extendedProps.description);
+
+         // Obtener el ID del evento
+         eventId = info.event.id;
+         
+         var isFeriado = info.event.extendedProps.feriado;
+ 
+         // Mostrar u ocultar los botones según si es feriado o no
+         if (isFeriado) {
+             $('#btnActualizar').hide();  
+             $('#btnEliminar').hide();
+         } else if(!isFeriado) {
+             $('#btnActualizar').show();
+             $('#btnEliminar').show();
+         }
+ 
+         // Formatear fechas
+         var inicio_formateado = info.event.start ? formatToYYYYMMDD(info.event.start) : '';
+         var fin_formateado = info.event.end ? formatToYYYYMMDD(info.event.end) : '';
+ 
+     
+        $('#inputTitulo').val(info.event.title);
+        $('#inputDescripcion').val(info.event.extendedProps.description);
         $('#datepicker1').val(inicio_formateado);
         $('#datepicker').val(fin_formateado);
-        $('#inputTipo').val(info.evento.extendedProps.tipo);
+        $('#inputTipo').val(info.event.extendedProps.tipo);
+
     }
 });
 
@@ -89,6 +96,7 @@ $('#btnActualizar').click(function(e) {
 
         // Crear un objeto con los nuevos datos del evento
         var updatedEvent = {
+            id : eventId,
             titulo: titulo,
             descripcion: descripcion,
             tipo: tipo,
@@ -112,7 +120,8 @@ $('#btnActualizar').click(function(e) {
                 calendar.refetchEvents();  // Recargar los eventos en el calendario
             },
             error: function(xhr, status, error) {
-                console.log('Error al actualizar el evento:', error);
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.detail ? xhr.responseJSON.detail : "Error desconocido";
+                alert("Error: " + errorMessage);
             }
         });
     } else {
@@ -150,3 +159,14 @@ $('#btnEliminar').click(function (e) {
         alert('Por favor, selecciona un evento para eliminar.');
     }
 });
+
+// Función para limpiar el formulario después de eliminar un evento
+function limpiarFormulario() {
+    $('#inputTitulo').val('');
+    $('#inputDescripcion').val('');
+    $('#datepicker1').val('');
+    $('#datepicker').val('');
+    $('#inputTipo').val('');
+    eventId = null; // Resetear el id del evento seleccionado
+}
+
