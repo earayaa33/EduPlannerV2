@@ -1,4 +1,5 @@
 var calendarEl = document.getElementById('calendar');
+
 var tipoSeleccionado = '';
 
 var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -23,13 +24,58 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
                         failureCallback();  // Si ocurre un error, notificar
                     }
                 });
+
+                successCallback(events);  // Pasar los eventos filtrados al calendario
             },
-            headerToolbar: {
-                left: 'prev,next today',  // Botones para cambiar de mes
-                center: 'title',  // Título del mes actual
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
+            error: function(xhr, status, error) {
+                console.log("Error al obtener los eventos:", error);
+                failureCallback();
             }
         });
+    },
+    eventDidMount: function(info) {
+        $(info.el).tooltip({
+            title: info.event.title,  // Muestra el título completo al pasar el cursor
+            placement: 'top',
+            trigger: 'hover',
+            container: 'body'
+        });
+    },
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+    eventClick: function(info) {
+        eventId = info.event.id;
+        var isFeriado = info.event.extendedProps.feriado;
+
+        if (isFeriado) {
+            $('#btnActualizar').hide();
+            $('#btnEliminar').hide();
+        } else {
+            $('#btnActualizar').show();
+            $('#btnEliminar').show();
+        }
+
+        var inicio_formateado = info.event.start ? formatToYYYYMMDD(info.event.start) : '';
+        var fin_formateado = info.event.end ? formatToYYYYMMDD(info.event.end) : '';
+
+        $('#inputTitulo').val(info.event.title);
+        $('#inputDescripcion').val(info.event.extendedProps.description);
+        $('#datepicker1').val(inicio_formateado);
+        $('#datepicker').val(fin_formateado);
+        $('#inputTipo').val(info.event.extendedProps.tipo);
+    }
+});
+
+calendar.render();
+
+// Filtrar eventos cuando se cambie la opción en el select
+$('#event-type-filter').change(function() {
+    calendar.refetchEvents();  // Recargar los eventos con el filtro aplicado
+});
+
 
 calendar.render();  // Renderizar el calendario    
 
