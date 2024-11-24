@@ -7,4 +7,5 @@ urlpatterns = [
     path('Registrarse/', vistas.Registrarse, name='Registrarse'),   
     path('salir/', vistas.salir, name='salir'),
     path('Panel Admin/', vistas.PanelAdmin, name='Panel Admin'),
+    path('Modificar evento/', vistas.ModificarEvento, name='Modificar evento')
 ]

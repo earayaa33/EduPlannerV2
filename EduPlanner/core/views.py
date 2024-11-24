@@ -55,4 +55,7 @@ def Registrarse(request):
             else:
                 data['form'] = Formulario
 
-    return render(request,'registration/Registrarse.html', data)        
+    return render(request,'registration/Registrarse.html', data)  
+
+def ModificarEvento(request):
+    return render(request, 'core/Modificar evento.html')      
