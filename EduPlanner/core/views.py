@@ -17,14 +17,7 @@ def inicio (request):
     return render(request,'core/inicio.html')
 
 def PanelAdmin (request):
-    if request.method == 'POST':
-        form = EventoForm(request.POST)
-        if form.is_valid():
-            # Este código será movido a una llamada a la API desde el frontend
-            event_data = form.cleaned_data
-            return JsonResponse({"message": "Formulario válido. Se enviará a la API."})
-    else:
-        form = EventoForm()
+    form = EventoForm()
     return render(request, 'core/Panel Admin.html', {'form': form})
 
 @login_required

@@ -65,9 +65,15 @@
                             <h5 class="card-title">Ingrese los detalles del evento</h5>
                             {{ form | crispy }}
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <input class="form-check-input" type="checkbox" value="" id="checkOficial">
                                 <label class="form-check-label" for="flexCheckDefault">
                                   Publicar evento inmediatamente (es oficial)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="checkPlanificacion">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                  Declarar evento como de planificacion interna
                                 </label>
                             </div>
                             <button class="btn btn-sm btn-primary float-end" type="submit">Registrar evento</button>
@@ -85,7 +91,7 @@
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 
-    <script src="{% static 'js/modificar_datos.js' %}"></script>
+    <script src="{% static 'js/crear_eventos.js' %}"></script>
 
 </body>
 </html>

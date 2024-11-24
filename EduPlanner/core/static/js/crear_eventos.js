@@ -12,8 +12,13 @@ document.getElementById('evento-form').addEventListener('submit', async function
     }
     });
 
-    const esOficial = document.getElementById('flexCheckDefault').checked;
+   
+
+    const esOficial = document.getElementById('checkOficial').checked;
     formObject.es_oficial = esOficial;
+
+    const esInterno = document.getElementById('checkPlanificacion').checked;
+    formObject.planificacion_interna = esInterno;
 
     if (formObject.fecha_inicio_day && formObject.fecha_inicio_month && formObject.fecha_inicio_year) {
         const fechaInicio = `${formObject.fecha_inicio_year}-${formObject.fecha_inicio_month.padStart(2, '0')}-${formObject.fecha_inicio_day.padStart(2, '0')}`;
@@ -48,7 +53,7 @@ document.getElementById('evento-form').addEventListener('submit', async function
     
     if (response.ok) {
         alert('Evento creado con éxito');
-        window.location.href = "{% url 'Panel Admin' %}";  // Redirige a la página de administración
+        window.location.href = '';  // Redirige a la página de administración
     } else {
         alert('Error al crear el evento: ' + data.detail);
     }

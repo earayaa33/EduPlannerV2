@@ -6,13 +6,7 @@ class EventoSerializer(serializers.ModelSerializer):
         model = Evento
         fields = '__all__'
 
-    def create(self, validated_data):
-        es_oficial = validated_data.get('es_oficial', False)
-
-        
-        if es_oficial:
-            return super().create(validated_data)
-        else:
-            
-            evento = super().create(validated_data)
-            return evento
+class EventoPublicoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evento
+        fields = ['titulo','descripcion','fecha_inicio','fecha_finalizacion','tipo']

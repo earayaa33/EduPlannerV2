@@ -2,21 +2,17 @@ from .models import Evento
 import requests
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser, AllowAny
 from rest_framework.response import Response
-from .serializers import EventoSerializer
+from .serializers import EventoSerializer, EventoPublicoSerializer
 from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
 from datetime import date
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
 
-class EventoViewSet(viewsets.ModelViewSet):
+class EventosViewSet(viewsets.ModelViewSet):
     serializer_class = EventoSerializer
 
-
-    def get_queryset(self):
-        queryset = Evento.objects.filter(es_oficial=True)
-        return queryset
-
+    queryset = Evento.objects.all()
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -73,12 +69,27 @@ class EventoViewSet(viewsets.ModelViewSet):
             # Si hay un error de validación (por ejemplo, fecha feriado)
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-class EventosYFeriadosAPIView(APIView):
+
+class EventosPublico(viewsets.ModelViewSet):
+    serializer_class = EventoPublicoSerializer
+    queryset = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [AllowAny]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+class EventosYFeriadosViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
-    def get(self, request, *args, **kwargs):
-        eventos = Evento.objects.all()
-        eventos_serializados = EventoSerializer(eventos, many=True).data
+    def list(self, request, *args, **kwargs):
+        eventos_publicos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
+        eventos_planificacion = Evento.objects.filter(planificacion_interna=True)
+        eventos_todos = eventos_publicos | eventos_planificacion
+
+        eventos_serializados = EventoSerializer(eventos_todos, many=True).data
 
         url = "https://api.boostr.cl/holidays.json"
 
@@ -89,7 +100,41 @@ class EventosYFeriadosAPIView(APIView):
         feriados = response.json().get("data",[])
 
         eventos_a_ordenar = [
-            {"id":evento["id"], "titulo":evento["titulo"], "descripcion":evento["descripcion"], "fecha_inicio":evento["fecha_inicio"], "fecha_finalizacion":evento["fecha_finalizacion"], "tipo":evento["tipo"], "feriado":False}
+            {"id":evento["id"], "titulo":evento["titulo"], "descripcion":evento["descripcion"], "fecha_inicio":evento["fecha_inicio"], "fecha_finalizacion":evento["fecha_finalizacion"], "tipo":evento["tipo"], "feriado":False, "planificacion_interna": evento["planificacion_interna"]}
+            for evento in eventos_serializados
+        ]
+        feriados_a_ordenar = [
+            {"titulo":feriado["title"], "fecha_inicio":feriado["date"], "tipo":feriado["type"], "feriado":True}
+            for feriado in feriados
+        ]
+
+        eventos_combinados =  eventos_a_ordenar + feriados_a_ordenar
+
+        for item in eventos_combinados:
+            item["fecha_inicio"] = date.fromisoformat(item["fecha_inicio"])
+
+        eventos_combinados.sort(key=lambda x: x["fecha_inicio"])
+
+        return Response(eventos_combinados)
+
+
+class EventosYFeriadosPublicoViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        eventos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
+        eventos_serializados = EventoPublicoSerializer(eventos, many=True).data
+
+        url = "https://api.boostr.cl/holidays.json"
+
+        headers = {"accept": "application/json"}
+
+        response = requests.get(url, headers=headers)
+
+        feriados = response.json().get("data",[])
+
+        eventos_a_ordenar = [
+            {"titulo":evento["titulo"], "descripcion":evento["descripcion"], "fecha_inicio":evento["fecha_inicio"], "fecha_finalizacion":evento["fecha_finalizacion"], "tipo":evento["tipo"], "feriado":False}
             for evento in eventos_serializados
         ]
         feriados_a_ordenar = [
@@ -117,3 +162,8 @@ class EventosPorAprobarViewSet(viewsets.ModelViewSet):
         evento.es_oficial = True
         evento.save()
         return Response({"detail": "Evento aprobado y movido a eventos oficiales."}, status=status.HTTP_200_OK)
+
+class EventosDePlanificacionInternaViewSet(viewsets.ModelViewSet):
+    queryset = Evento.objects.filter(planificacion_interna=True)
+    serializer_class = EventoSerializer
+    permission_classes = [IsAdminUser]
