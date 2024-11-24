@@ -64,6 +64,12 @@
                         <div class="card-body">
                             <h5 class="card-title">Ingrese los detalles del evento</h5>
                             {{ form | crispy }}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault">
+                                  Publicar evento inmediatamente (es oficial)
+                                </label>
+                            </div>
                             <button class="btn btn-sm btn-primary float-end" type="submit">Registrar evento</button>
                         </div>
                     </div>

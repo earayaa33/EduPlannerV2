@@ -3,12 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login
 from core.forms import RegistroUserCreationForm, EventoForm 
 from django.contrib.auth import authenticate
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from core.models import Evento
 from core.serializers import EventoSerializer
+from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
 from django.http import HttpResponse

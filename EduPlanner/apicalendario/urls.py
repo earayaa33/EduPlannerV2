@@ -8,6 +8,7 @@ router = routers.DefaultRouter()
 #Se añaden al router los endpoints a los viewsets
 
 router.register('eventos', views.EventoViewSet, basename='evento')
+router.register('eventos-por-aprobar', views.EventosPorAprobarViewSet, basename='eventos_por_aprobar')
 
 urlpatterns = [
     path('', include(router.urls)),

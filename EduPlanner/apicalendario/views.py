@@ -7,10 +7,16 @@ from rest_framework import viewsets, generics, status
 from rest_framework.views import APIView
 from datetime import date
 from rest_framework.decorators import api_view
+from rest_framework.decorators import action
 
 class EventoViewSet(viewsets.ModelViewSet):
-    queryset = Evento.objects.all()
     serializer_class = EventoSerializer
+
+
+    def get_queryset(self):
+        queryset = Evento.objects.filter(es_oficial=True)
+        return queryset
+
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -100,3 +106,14 @@ class EventosYFeriadosAPIView(APIView):
 
         return Response(eventos_combinados)
 
+class EventosPorAprobarViewSet(viewsets.ModelViewSet):
+    queryset = Evento.objects.filter(es_oficial=False)
+    serializer_class = EventoSerializer
+    permission_classes = [IsAdminUser]
+
+    @action(detail=True, methods=['post'])
+    def approve_event(self, request, pk=None):
+        evento = self.get_object()
+        evento.es_oficial = True
+        evento.save()
+        return Response({"detail": "Evento aprobado y movido a eventos oficiales."}, status=status.HTTP_200_OK)

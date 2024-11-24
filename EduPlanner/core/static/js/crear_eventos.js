@@ -12,6 +12,9 @@ document.getElementById('evento-form').addEventListener('submit', async function
     }
     });
 
+    const esOficial = document.getElementById('flexCheckDefault').checked;
+    formObject.es_oficial = esOficial;
+
     if (formObject.fecha_inicio_day && formObject.fecha_inicio_month && formObject.fecha_inicio_year) {
         const fechaInicio = `${formObject.fecha_inicio_year}-${formObject.fecha_inicio_month.padStart(2, '0')}-${formObject.fecha_inicio_day.padStart(2, '0')}`;
         formObject.fecha_inicio = fechaInicio;
