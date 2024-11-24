@@ -47,9 +47,11 @@
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-5" style="width: 70%; margin: auto; overflow: hidden;">
         <!-- Div para el calendario -->
         <div id="calendar"></div>
+
+    
 
     {% load crispy_forms_tags %}
 
@@ -86,11 +88,13 @@
     
     </div>
 
-    <!-- JQuery (requerido por FullCalendar) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- FullCalendar JS -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <!-- JQuery (requerido por FullCalendar) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
+    <script src="{% static 'js/crear_eventos.js' %}"></script>
     <script src="{% static 'js/crear_eventos.js' %}"></script>
 
 </body>

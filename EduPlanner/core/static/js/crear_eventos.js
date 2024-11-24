@@ -1,4 +1,5 @@
 document.getElementById('evento-form').addEventListener('submit', async function(event) {
+    window.location.href = '/core/Panel Admin/'; // se extrae la url de Panel Admin
     event.preventDefault();  // Evita el envío tradicional del formulario
 
     // Obtén los datos del formulario
@@ -64,35 +65,52 @@ document.getElementById('evento-form').addEventListener('submit', async function
     });
 
 
-var calendarEl = document.getElementById('calendar');
+    var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
         locale: 'es',  // Configurar el idioma en español
         events: function(fetchInfo, successCallback, failureCallback) {
-                $.ajax({
-                    url: '/api/eventos-y-feriados/',  // URL de la API para obtener los eventos
-                    method: 'GET',
-                    success: function(data) {
-                        var events = data.map(function(event) {
-                            return {
-                                title: event.titulo,  // Título del evento
-                                start: event.fecha_inicio,  // Fecha de inicio
-                                end: event.fecha_finalizacion  // Fecha de finalización
-                            };
-                        });
-                        successCallback(events);  // Retornar los eventos al calendario
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error al obtener los eventos:", error);
-                        failureCallback();  // Si ocurre un error, notificar
-                    }
-                });
-            },
-            headerToolbar: {
-                left: 'prev,next today',  // Botones para cambiar de mes
-                center: 'title',  // Título del mes actual
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
+            var eventType = document.getElementById('event-type-filter').value;  // Obtener el valor seleccionado del filtro
+            
+            // Construir la URL para la API con el tipo de evento seleccionado
+            var url = '/api/eventos-y-feriados/';
+            if (eventType) {
+                url += '?tipo=' + eventType;  // Agregar el parámetro tipo si se seleccionó uno
             }
-        });
+            
+            $.ajax({
+                url: url,  // URL de la API para obtener los eventos
+                method: 'GET',
+                success: function(data) {
+                    // Mapear los datos obtenidos de la API a los eventos del calendario
+                    var events = data.map(function(event) {
+                        return {
+                            title: event.titulo,  // Título del evento
+                            start: event.fecha_inicio,  // Fecha de inicio
+                            end: event.fecha_finalizacion,  // Fecha de finalización
+                            description: event.descripcion,
+                            tipo: event.tipo,
+                            feriado: event.feriado
+                        };
+                    });
+                    successCallback(events);  // Pasar los eventos al calendario
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error al obtener los eventos:", error);
+                    failureCallback();  // Si ocurre un error, notificar al calendario
+                }
+            });
+        },
+        headerToolbar: {
+            left: 'prev,next today',  // Botones para cambiar de mes
+            center: 'title',  // Título del mes actual
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
+        }
+    });
 
-    calendar.render();  // Renderizar el calendario    
+    // Actualizar los eventos cuando se cambie el filtro
+    document.getElementById('event-type-filter').addEventListener('change', function() {
+        calendar.refetchEvents();  // Refrescar los eventos del calendario con el nuevo filtro
+    });
+
+    calendar.render();  // Renderizar el calendario
