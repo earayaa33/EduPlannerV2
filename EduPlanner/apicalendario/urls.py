@@ -4,7 +4,7 @@ from django.urls import path, include
 
 router = routers.DefaultRouter()
 
-#Se añaden al router los endpoints a los viewsets
+
 
 router.register('eventos-publicos', views.EventosPublico, basename='eventos_publicos')
 router.register('eventos', views.EventosViewSet, basename='eventos')
