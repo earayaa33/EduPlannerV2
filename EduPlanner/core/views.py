@@ -4,6 +4,12 @@ from django.contrib.auth import logout, login
 from core.forms import RegistroUserCreationForm, EventoForm 
 from django.contrib.auth import authenticate
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from core.models import Evento
+from core.serializers import EventoSerializer
+
 # Create your views here.
 from django.http import HttpResponse
 
@@ -55,3 +61,10 @@ def Registrarse(request):
                 data['form'] = Formulario
 
     return render(request,'registration/Registrarse.html', data)        
+
+
+@api_view(['GET'])
+def obtener_eventos(request):
+    eventos = Evento.objects.all()
+    serializer = EventoSerializer(eventos, many=True)
+    return Response(serializer.data)
