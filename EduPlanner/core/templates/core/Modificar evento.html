@@ -1,3 +1,11 @@
+{% load static %}
+
+
+<script type="text/javascript">
+    var csrfToken = '{{ csrf_token }}';
+</script>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,7 +60,7 @@
 
     <div class="container">
 
-        <div class="row">
+        <div class="row mt-5">
 
             <div class="col-lg-6">
                 <div class="row">
@@ -80,11 +88,9 @@
                         <label for="exampleDataList" class="form-label">Datalist example</label>
                         <input class="form-control" list="opcionesDataList" id="inputTipo" placeholder="Type to search...">
                         <datalist id="opcionesDataList">
-                            <option value="San Francisco">
-                            <option value="New York">
-                            <option value="Seattle">
-                            <option value="Los Angeles">
-                            <option value="Chicago">
+                            {% for value, label in tipo_choices %}
+                                <option value="{{ label }}">{{ value }}</option>
+                            {% endfor %}
                         </datalist>
 
                     </div>
@@ -92,16 +98,16 @@
                     <div class="row mb-5">
 
                         <div class="col-lg-6">
-                            <input id="datepicker1" width="276" />
+                            <input id="datepicker1" value="2022-12-20" width="276" />
                             <script>
-                                $('#datepicker1').datepicker({ uiLibrary: 'bootstrap5', locale: 'es-es', });
+                                $('#datepicker1').datepicker({ uiLibrary: 'bootstrap5', locale: 'es-es', format:'yyyy-mm-dd'});
                             </script>
                         </div>
                         
                         <div class="col-lg-6">
-                            <input id="datepicker" width="276" />
+                            <input id="datepicker" value="2022-12-20" width="276" />
                             <script>
-                                $('#datepicker').datepicker({ uiLibrary: 'bootstrap5', locale: 'es-es', format: 'yyyy/mm/dd'});
+                                $('#datepicker').datepicker({ uiLibrary: 'bootstrap5', locale: 'es-es', format: 'yyyy-mm-dd'});
                             </script>
 
                         </div>
@@ -110,8 +116,8 @@
 
                     <div class="row">
 
-                        <div class="col-lg-6"><button class="btn btn-primary" type="submit">Actualizar evento</button></div>
-                        <div class="col-lg-6"><button class="btn btn-danger" type="submit">Eliminar evento</button></div>
+                        <div class="col-lg-6"><button class="btn btn-primary" id="btnActualizar" type="submit">Actualizar evento</button></div>
+                        <div class="col-lg-6"><button class="btn btn-danger" id="btnEliminar" type="submit">Eliminar evento</button></div>
 
                     </div>
 
@@ -128,56 +134,15 @@
 
     </div>
 
-    <!-- FullCalendar JS -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <!-- JQuery (requerido por FullCalendar) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script>
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',  // Vista inicial del calendario (mes)
-            locale: 'es',  // Configurar el idioma en español
-            events: function(fetchInfo, successCallback, failureCallback) {
-                $.ajax({
-                    url: '/api/eventos/',  // URL de la API para obtener los eventos
-                    method: 'GET',
-                    success: function(data) {
-                        var events = data.map(function(event) {
-                            return {
-                                title: event.titulo,  // Título del evento
-                                start: event.fecha_inicio,  // Fecha de inicio
-                                end: event.fecha_finalizacion, // Fecha de finalización
-                                description: event.descripcion,
-                                tipo: event.tipo
-                                
-                            };
-                        });
-                        successCallback(events);  // Retornar los eventos al calendario
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("Error al obtener los eventos:", error);
-                        failureCallback();  // Si ocurre un error, notificar
-                    }
-                });
-            },
-            headerToolbar: {
-                left: 'prev,next today',  // Botones para cambiar de mes
-                center: 'title',  // Título del mes actual
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'  // Opciones para cambiar la vista
-            },
-            eventClick: function(info) {
-                // Cuando un evento es clickeado, rellenamos los campos del formulario
-                $('#inputTitulo').val(info.event.title);
-                $('#inputDescripcion').val(info.event.extendedProps.description);
-                $('#datepicker1').val(info.event.start.toLocaleDateString());
-                $('#datepicker').val(info.event.end ? info.event.end.toLocaleDateString() : '');
-                $('#inputTipo').val(info.event.extendedProps.tipo);
-            }
-        });
-
-        calendar.render();  // Renderizar el calendario
-    </script>
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     
+    
+   
+
+    <script src="{% static 'js/modificar_datos.js' %}"></script>
+
 </body>
 </html>
