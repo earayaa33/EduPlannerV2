@@ -1,11 +1,9 @@
-#from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission
 
-#class administradorAcademico(BasePermission):
+class administradorAcademico(BasePermission):
 
- #   def has_permission(self, request, view):
-  #      return request.user.groups.filter(name='Administrador academico').exists()
+     def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
 
-#class usuarioComun(BasePermission):
-    
-  #  def has_permission(self, request, view):
-   #     return request.method in ('GET', 'HEAD', 'OPTIONS')
+        return request.user.groups.filter(name='Administrador academico').exists() 

@@ -4,8 +4,6 @@ from django.urls import path, include
 
 router = routers.DefaultRouter()
 
-
-
 router.register('eventos-publicos', views.EventosPublico, basename='eventos_publicos')
 router.register('eventos', views.EventosViewSet, basename='eventos')
 router.register('eventos-publicos-y-feriados', views.EventosYFeriadosPublicoViewSet, basename='eventos_publicos_y_feriados')

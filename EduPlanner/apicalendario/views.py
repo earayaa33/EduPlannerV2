@@ -1,6 +1,7 @@
 from .models import Evento
 import requests
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser, AllowAny
+from .permissions import administradorAcademico
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from .serializers import EventoSerializer, EventoPublicoSerializer
 from rest_framework import viewsets, generics, status
@@ -14,7 +15,7 @@ class EventosViewSet(viewsets.ModelViewSet):
 
     queryset = Evento.objects.all()
 
-    permission_classes = [IsAdminUser]
+    permission_classes = [administradorAcademico]
 
     def perform_create(self, serializer):
          
@@ -73,11 +74,11 @@ class EventosPublico(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             permission_classes = [AllowAny]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [administradorAcademico]
         return [permission() for permission in permission_classes]
 
 class EventosYFeriadosViewSet(viewsets.ViewSet):
-    permission_classes = [IsAdminUser]
+    permission_classes = [administradorAcademico]
 
     def list(self, request, *args, **kwargs):
         eventos_publicos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
@@ -120,15 +121,10 @@ class EventosYFeriadosPublicoViewSet(viewsets.ViewSet):
 
         tipo_evento = request.query_params.get('tipo')
 
-        print(f"Tipo de evento recibido: {tipo_evento}")
-
         eventos = Evento.objects.filter(planificacion_interna=False, es_oficial=True)
         
         if tipo_evento:
             eventos = eventos.filter(tipo=tipo_evento)
-            
-
-        print(f"Eventos filtrados: {eventos}")
 
         eventos_serializados = EventoPublicoSerializer(eventos, many=True).data
 
@@ -161,7 +157,7 @@ class EventosYFeriadosPublicoViewSet(viewsets.ViewSet):
 class EventosPorAprobarViewSet(viewsets.ModelViewSet):
     queryset = Evento.objects.filter(es_oficial=False)
     serializer_class = EventoSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [administradorAcademico]
 
     @action(detail=True, methods=['post'])
     def approve_event(self, request, pk=None):
@@ -173,4 +169,4 @@ class EventosPorAprobarViewSet(viewsets.ModelViewSet):
 class EventosDePlanificacionInternaViewSet(viewsets.ModelViewSet):
     queryset = Evento.objects.filter(planificacion_interna=True)
     serializer_class = EventoSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [administradorAcademico]
