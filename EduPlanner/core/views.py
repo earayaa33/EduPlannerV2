@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login
-from core.forms import RegistroUserCreationForm, EventoForm 
+from .forms import RegistroUserCreationForm, EventoForm 
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -37,8 +37,7 @@ def salir(request):
     logout(request)
     return redirect("inicio")
 
-def Registrarse(request):
-    return render(request,'registration/Registrarse.html')      
+def Registrarse(request):     
     data = {
         'form': RegistroUserCreationForm()      
     }   
