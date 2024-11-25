@@ -20,7 +20,7 @@
             <div class="navbar-nav">
                <a class="nav-link active text-white" aria-current="page" href="{% url 'inicio' %}">Pagina Principal</a>
                {% if request.user.is_authenticated %} 
-                  {% if request.user.is_superuser or request.user.groups.all.0.name == 'administrador academico' %} 
+                  {% if request.user.is_superuser or request.user.groups.all.0.name == 'Administrador academico' %} 
                      <a href="{% url 'Panel Admin' %}" class="nav-link text-white">Agregar Evento</a>  
                      <a href="{% url 'Modificar evento' %}" class="nav-link text-white">Modificar Evento</a> 
                   {% endif %}                                          
